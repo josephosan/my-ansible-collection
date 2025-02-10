@@ -9,7 +9,7 @@
     - community.general
 
   vars:
-    # Location for job reports
+    # Out location
     outdir: /Users/joseph/Desktop/Personal/ansible/reports
 
   pre_tasks:
