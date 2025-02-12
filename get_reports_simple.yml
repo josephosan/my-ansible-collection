@@ -17,7 +17,7 @@
       run_once: yes
       delegate_to: localhost
       file:
-        path: "{{ outdir }}"
+        path: '{{ outdir }}'
         state: directory
 
   tasks:
@@ -31,16 +31,31 @@
         cmd: free -h
       register: memory_results
 
+    - name: CPU usage
+      command:
+        cmd: mpstat 1 1
+      register: cpu_results
+
+    - name: System uptime and load
+      command:
+        cmd: uptime
+      register: uptime_results
+
+    - name: Check for failed system services
+      command:
+        cmd: systemctl --failed
+      register: failed_services
+
   post_tasks:
     - name: Save some useful facts under Ansible controller
       delegate_to: localhost
       delegate_facts: True
       run_once: yes
       set_fact:
-        date_str: "{{ date }}_{{ hms }}"
-        date_str_pretty: "{{ date }} {{ hms_pretty }}"
-        success_list: "{{ ansible_play_hosts }}"
-        failed_list: "{{ ansible_play_hosts_all | difference(ansible_play_hosts) }}"
+        date_str: '{{ date }}_{{ hms }}'
+        date_str_pretty: '{{ date }} {{ hms_pretty }}'
+        success_list: '{{ ansible_play_hosts }}'
+        failed_list: '{{ ansible_play_hosts_all | difference(ansible_play_hosts) }}'
       vars:
         date: "{{ '%Y-%m-%d' | strftime }}"
         hms_pretty: "{{ '%H:%M:%S' | strftime }}"
@@ -74,6 +89,15 @@
 
             <h4>Memory Status:</h4>
             <pre>{{ hostvars[h]['memory_results']['stdout']|d('No output')|trim }}</pre>
+
+            <h4>CPU Usage:</h4>
+            <pre>{{ hostvars[h]['cpu_results']['stdout']|d('No output')|trim }}</pre>
+
+            <h4>System Uptime & Load:</h4>
+            <pre>{{ hostvars[h]['uptime_results']['stdout']|d('No output')|trim }}</pre>
+
+            <h4>Failed System Services:</h4>
+            <pre>{{ hostvars[h]['failed_services']['stdout']|d('No output')|trim }}</pre>
 
             {% endfor %}
             <hr>
