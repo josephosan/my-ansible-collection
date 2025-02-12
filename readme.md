@@ -39,3 +39,11 @@ For example, you can define the `web_servers` group as follows:
 [web_servers]
 *.*.*.* ansible_user=joseph name=SwedenServer # Sweden server
 ```
+
+### Running a Playbook with a Custom Inventory File
+
+You can use the following command to run a playbook with a custom inventory file:
+
+```bash
+ansible-playbook -i ./inventory/vpn-inventory.ini hiddify-report/get_reports.yml
+```
