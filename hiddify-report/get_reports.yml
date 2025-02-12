@@ -45,9 +45,9 @@
       command: systemctl status hiddify-xray
       register: hiddify_vpn_status
 
-    - name: Get Hiddify active connections
-      command: netstat -tuln | grep ':443' # Assuming Hiddify runs on port 443, adjust as needed
-      register: hiddify_active_connections
+    # - name: Get Hiddify active connections
+    #   command: netstat -tuln | grep ':443' # Assuming Hiddify runs on port 443, adjust as needed
+    #   register: hiddify_active_connections
 
     - name: Get Hiddify logs
       command: journalctl -u hiddify-xray --since "1 day ago"
