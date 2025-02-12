@@ -10,7 +10,7 @@
 
   vars:
     # Out location
-    outdir: /Users/joseph/Desktop/Personal/ansible/reports
+    outdir: /Users/joseph/Desktop/Personal/ansible/reports/server
 
   pre_tasks:
     - name: Create output folder

@@ -18,3 +18,24 @@ To get started with this collection, you'll need to have Ansible installed on yo
 git clone https://github.com/your-username/my-ansible-collection.git
 cd my-ansible-collection
 ```
+
+## How to Create an Inventory File in Ansible
+
+An **inventory file** in Ansible contains the list of all the servers you want to manage. You need to create this file to specify the server addresses, connection details, and any necessary additional variables. This file is crucial for running playbooks on your servers.
+
+### Steps to Create the Inventory File
+
+1. **Create the Inventory File**
+
+   First, create a new file named `inventory` (or another name of your choice) in the root of your project directory.
+
+2. **Add Server Information**
+
+   In this file, define your servers under a group, like `web_servers`. Use the following format for each server:
+
+For example, you can define the `web_servers` group as follows:
+
+```ini
+[web_servers]
+*.*.*.* ansible_user=joseph name=SwedenServer # Sweden server
+```
