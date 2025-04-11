@@ -24,3 +24,37 @@ _exec() {
 setup_user() {
     _exec "setup_new_user" "new_user=$1 new_user_password=$2"
 }
+
+setup_neo_vim() {
+    _exec "install_neo_vim"
+}
+
+setup_docker() {
+    _exec "install_docker"
+}
+
+setup_nginx() {
+    _exec "install_nginx"
+}
+
+setup_ssh_config() {
+    _exec "secure_ssh_config"
+}
+
+
+# ---------------------------- setup a new server ---------------------------- #
+setup_new_server() {
+    _user="$USER_NAME"
+    _pass="$USER_PASSWORD"
+    _disable_root_login_and_password_auth=$DISABLE_ROOT_LOGIN_AND_PASSWORD_AUTH
+
+    setup_user "$_user" "$_pass"
+    setup_neo_vim
+    setup_docker
+    setup_nginx
+
+    if [[ $_disable_root_login_and_password_auth == true ]]; then
+        setup_ssh_config
+    fi
+}
+

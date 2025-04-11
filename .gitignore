@@ -2,3 +2,4 @@
 inventory
 reports
 *.restore
+.env
