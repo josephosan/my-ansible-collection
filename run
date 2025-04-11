@@ -50,11 +50,10 @@ setup_new_server() {
 
     setup_user "$_user" "$_pass"
     setup_neo_vim
-    setup_docker
-    setup_nginx
 
     if [[ $_disable_root_login_and_password_auth == true ]]; then
         setup_ssh_config
     fi
-}
 
+    setup_nginx
+}
