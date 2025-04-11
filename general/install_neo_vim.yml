@@ -1,0 +1,80 @@
+---
+- name: Install Neovim and cool features
+  hosts: all
+  become: yes
+  tasks:
+    # Update apt and install required dependencies
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install dependencies for Neovim
+      apt:
+        name:
+          - neovim
+          - curl
+          - git
+          - ripgrep
+          - python3-neovim
+          - npm
+        state: present
+
+    # Create necessary directories for Neovim configuration
+    - name: Create directory for Neovim config
+      file:
+        path: '/home/{{ ansible_user }}/.config/nvim'
+        state: directory
+        mode: '0755'
+
+    # Copy custom init.vim configuration to the server
+    - name: Copy init.vim
+      copy:
+        src: ../config/neovim/init.vim
+        dest: '/home/{{ ansible_user }}/.config/nvim/init.vim'
+        mode: '0644'
+
+    # Install Vim Plug (plugin manager for Neovim)
+    - name: Install Vim Plug
+      shell: |
+        curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+          https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      args:
+        creates: '~/.local/share/nvim/site/autoload/plug.vim'
+
+    # Install plugins using vim-plug
+    - name: Install Neovim plugins
+      command: nvim +PlugInstall +qall
+      become_user: '{{ ansible_user }}'
+      args:
+        creates: '/home/{{ ansible_user }}/.local/share/nvim/site/autoload/plug.vim'
+
+    # Ensure ripgrep is available for fzf and other plugins
+    - name: Install ripgrep
+      apt:
+        name: ripgrep
+        state: present
+
+    # Install Node.js for coc.nvim (auto-completion)
+    - name: Install Node.js for coc.nvim
+      apt:
+        name: nodejs
+        state: present
+
+    # Install yarn (for coc.nvim plugins)
+    - name: Install yarn
+      apt:
+        name: yarn
+        state: present
+
+    # Clone or update some additional useful Neovim plugins
+    - name: Clone fzf plugin
+      git:
+        repo: 'https://github.com/junegunn/fzf.vim'
+        dest: '/home/{{ ansible_user }}/.config/nvim/pack/plugins/start/fzf.vim'
+        update: yes
+
+    - name: Clone coc.nvim plugin
+      git:
+        repo: 'https://github.com/neoclide/coc.nvim'
+        dest: '/home/{{ ansible_user }}/.config/nvim/pack/plugins/start/coc.nvim'
+        update: yes

@@ -1,0 +1,41 @@
+# ansible-playbook -i ./inventory/inventory.ini ./general/create_user.yml --extra-vars "new_user=myuser new_user_password=mysecurepassword"
+
+---
+- name: Create a user, grant sudo access, and set password
+  hosts: all
+  become: yes
+  vars:
+    username: '{{ new_user }}'
+    user_password: '{{ new_user_password }}'
+
+  tasks:
+    # Create the user
+    - name: Create a new user
+      user:
+        name: '{{ username }}'
+        state: present
+        password: "{{ user_password | password_hash('sha512') }}"
+        comment: 'User created by Ansible'
+        shell: /bin/bash
+
+    # Add the user to the sudo group
+    - name: Add user to the sudo group
+      user:
+        name: '{{ username }}'
+        groups: sudo
+        append: yes
+
+    # Grant passwordless sudo access to the user
+    - name: Grant passwordless sudo access to the user
+      lineinfile:
+        path: /etc/sudoers
+        regexp: '^{{ username }}'
+        line: '{{ username }} ALL=(ALL) NOPASSWD:ALL'
+        validate: visudo -cf %s
+
+    # Ensure the user can use sudo without a password
+    - name: Ensure user has no password sudo access
+      copy:
+        dest: '/etc/sudoers.d/{{ username }}'
+        content: '{{ username }} ALL=(ALL) NOPASSWD:ALL'
+        mode: '0440'
