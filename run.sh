@@ -1,20 +1,3 @@
-# ------------------------------ main logic ----------------------------- #
-if [[ $# -gt 0 ]]; then
-    command=$1
-    shift  # Remove the first argument, so the remaining arguments are passed to the function
-
-    if declare -f "$command" > /dev/null; then
-        # Call the function dynamically with the remaining arguments
-        "$command" "$@"
-    else
-        echo "Unknown command: $command"
-        echo "Available commands: $(declare -F | awk '{print $3}')"
-    fi
-else
-    echo "No command provided. Usage: ./run <command> [args]"
-fi
-
-
 # ---------------------------------- general --------------------------------- #
 _exec() {
     ansible-playbook -i inventory/inventory.ini "general/$1.yml" --extra-vars "$2"
@@ -44,11 +27,7 @@ setup_ssh_config() {
 
 # ---------------------------- setup a new server ---------------------------- #
 setup_new_server() {
-    _user="$USER_NAME"
-    _pass="$USER_PASSWORD"
-    _disable_root_login_and_password_auth=$DISABLE_ROOT_LOGIN_AND_PASSWORD_AUTH
-
-    setup_user "$_user" "$_pass"
+    setup_user "$1" "$2"
     setup_neo_vim
 
     if [[ $_disable_root_login_and_password_auth == true ]]; then
@@ -57,3 +36,6 @@ setup_new_server() {
 
     setup_nginx
 }
+
+# To be able to run functions
+"${@:-help}"
