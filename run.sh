@@ -3,6 +3,10 @@ _exec() {
     ansible-playbook -i inventory/inventory.ini "general/$1.yml" --extra-vars "$2"
 }
 
+help() {
+    echo "Fuck you, he said"
+}
+
 # ------------------------------ handy functions ----------------------------- #
 setup_user() {
     _exec "setup_new_user" "new_user=$1 new_user_password=$2"
